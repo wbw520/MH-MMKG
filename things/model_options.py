@@ -6,16 +6,13 @@ from openai import OpenAI
 import cv2
 
 
-def model_selection(model_name):
+def model_selection(model_name, api_key):
     if "gpt" in model_name:
-        return GPT4(model_name)
+        return GPT4(model_name, api_key)
     elif "claude" in model_name:
-        return Claude(model_name)
+        return Claude(model_name, api_key)
     elif "gemini" in model_name:
-        return Gemini(model_name)
-
-os.environ['OPENAI_API_KEY'] = 'sk-proj-a4kV7LXxBy625HUi7agET3BlbkFJPSFs9AAK0Fl3771uzdME'
-client = OpenAI()
+        return Gemini(model_name, api_key)
 
 
 # Function to encode the image
@@ -25,8 +22,10 @@ def encode_image(image_path):
 
 
 class GPT4:
-    def __init__(self, model_name):
+    def __init__(self, model_name, api_key):
         self.mode_name = model_name
+        os.environ['OPENAI_API_KEY'] = api_key
+        self.client = OpenAI()
         # gpt-4o-mini-2024-07-18
         # gpt-4o-2024-11-20
 
@@ -53,7 +52,7 @@ class GPT4:
 
     def __call__(self, text, images):
         content = self.make_content(text, images)
-        response = client.chat.completions.create(
+        response = self.client.chat.completions.create(
             model=self.mode_name,
             messages=[
                 {
@@ -92,10 +91,10 @@ def compress(input_path, output_path, scale=0.5):
 def compress_image(root, name=""):
 
     if "gemini" in name or "claude" in name:
-        new_root = root.replace("D:\PycharmProjects\MM-KG", "D:\PycharmProjects\MM-KG\Compress Source Gemini")
+        new_root = os.path.join("Compress Source Gemini", root)
         scale = 0.3
     else:
-        new_root = root.replace("D:\PycharmProjects\MM-KG", "D:\PycharmProjects\MM-KG\Compress Source")
+        new_root = os.path.join("Compress Source", root)
         scale = 0.5
 
     if os.path.exists(new_root):
@@ -105,13 +104,10 @@ def compress_image(root, name=""):
         return new_root
 
 
-client2 = anthropic.Anthropic(
-    api_key="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",
-)
-
 class Claude:
-    def __init__(self, model_name):
+    def __init__(self, model_name, api_key):
         self.mode_name = model_name
+        self.client = anthropic.Anthropic(api_key=api_key)
         # claude-3-7-sonnet-20250219
         # claude-3-5-sonnet-20241022
         # claude-3-5-haiku-20241022
@@ -141,7 +137,7 @@ class Claude:
 
     def __call__(self, text, images):
         content = self.make_content(text, images)
-        response = client2.messages.create(
+        response = self.client.messages.create(
             model=self.mode_name,
             max_tokens=4096,
             messages=[
@@ -156,12 +152,12 @@ class Claude:
 
         return response.content[0].text
 
-genai.configure(api_key="AIzaSyAMCjd5yeqxxcI8Z6xYpBU0fBQ6W1jcUis")
 
 class Gemini:
-    def __init__(self, model_name):
+    def __init__(self, model_name, api_key):
         self.model_name = model_name
         self.model = genai.GenerativeModel(self.model_name)
+        genai.configure(api_key=api_key)
         # gemini-1.5-pro-002
         # gemini-2.0-flash-001
         # gemini-2.5-flash-preview-04-17

@@ -4,12 +4,13 @@ from things.templates import offline_images_description
 from things.data_loading import data_reform, data_organize
 import json, os
 from things.templates import TP
+from configs import parser
 
 
 def kg_offline():
     nodes_aggregation, relation_aggregation = construct_graph(root, "", "")
     all_entities = list(nodes_aggregation.keys())
-    file_path = os.path.join(root, "mmkg", "kg_offline_" + modal_name+".json")
+    file_path = os.path.join(root, "mmkg", "kg_offline_" + model_name+".json")
 
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
@@ -38,7 +39,7 @@ def kg_offline():
 
 def question_offline():
     print("!!!!!!!!!!")
-    file_path = os.path.join(root, "questions_mh\question_offline_" + modal_name + ".json")
+    file_path = os.path.join(root, "questions_mh\question_offline_" + model_name + ".json")
 
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
@@ -69,10 +70,12 @@ def question_offline():
 
 
 if __name__ == "__main__":
-    root = "D:\PycharmProjects\MM-KG"
-    modal_name = "claude-3-5-haiku-20241022"
-    use_name = True
-    use_extra = True
-    model = model_selection(modal_name)
+    args = parser.parse_args()
+    root = args.dataset_dir
+    use_name = args.use_name
+    use_extra = args.use_extra
+    model_name = args.model_name
+    api_key = args.api_key
+    model = model_selection(model_name, api_key)
     kg_offline()
     question_offline()

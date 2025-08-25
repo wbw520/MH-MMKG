@@ -235,8 +235,8 @@ class TP:
         Now, start to complete your task.
         Your 'Response':
         """
-        # print("AAAAAAAAAAAAAAAAA")
-        # print(template_)
+        print("AAAAAAAAAAAAAAAAA")
+        print(template_)
         return template_
 
 

@@ -1,5 +1,4 @@
 import random
-from datetime import datetime
 
 
 def construct_final_knowledge(knowledge_routes, entity_aggregation, relation_aggregation):
@@ -110,12 +109,8 @@ class KnowledgeSearch:
                 neighbour_selection += relation_info_construction(current_entity, neighbour_entity, self.relation_aggregation)
 
             memory_for_entity_selection = route_aggregation(record["route"], record["entity"], self.relation_aggregation)
-            start = datetime.now()
             related_neighbour_entity = self.model(self.tp.entity_selection(memory_for_entity_selection, current_entity, neighbour_selection), []).replace("\n", "")
-            end = datetime.now()
-            elapsed_time1 = (end - start).total_seconds()
-            self.time_record.append(elapsed_time1)
-            # print("NNNNNNNNNNNNN", related_neighbour_entity)
+            print("NNNNNNNNNNNNN", related_neighbour_entity)
 
             # save all current loop info
             recursion_calls = []
@@ -123,6 +118,7 @@ class KnowledgeSearch:
             if related_neighbour_entity != "None":
                 related_neighbour_entity_ = related_neighbour_entity.split(";")
                 if "Phase" in related_neighbour_entity:
+                    # force to process only one phase type neighbour
                     rrrr = []
                     for rr in related_neighbour_entity_:
                         if rr != "":
@@ -157,9 +153,8 @@ class KnowledgeSearch:
                     if next_search_entity in self.tp.monster_name:
                         images = ""
 
-                    start = datetime.now()
                     if "Online" in self.mode and images != "":
-                        # print(images)
+                        print(images)
                         next_search_entity_results = self.model(self.tp.entity_analysis(memory_for_entity_analysis, next_search_entity, next_search_entity_info, images), images)
                         all_results = next_search_entity_results.split(";")
                         next_search_entity_status, entity_description = all_results[0], all_results[1]
@@ -169,9 +164,6 @@ class KnowledgeSearch:
                         record["description"].update({next_search_entity: entity_description})
                     else:
                         next_search_entity_status = self.model(self.tp.entity_analysis(memory_for_entity_analysis, next_search_entity, next_search_entity_info), [])
-                    end = datetime.now()
-                    elapsed_time1 = (end - start).total_seconds()
-                    self.time_record.append(elapsed_time1)
 
                     if "Yes" in next_search_entity_status:
                         next_search_entity_status = "Yes"
@@ -179,7 +171,7 @@ class KnowledgeSearch:
                         next_search_entity_status = "No"
                     else:
                         continue
-                    # print(">>>>>>>>>>>>>>>>", next_search_entity_status)
+                    print(">>>>>>>>>>>>>>>>", next_search_entity_status)
                     current_record = {"route": current_route_record, "entity": record["entity"].copy(), "description": record["description"].copy()}
                     if next_search_entity_status == "Yes":
 
@@ -192,7 +184,6 @@ class KnowledgeSearch:
                     self.search(*call)
 
     def __call__(self):
-        self.time_record = []
         # for online if there is image for question
         if "Online" in self.mode and self.tp.images != "":
             question_description = self.model(self.tp.question_image_understanding(), self.tp.images)
@@ -202,21 +193,21 @@ class KnowledgeSearch:
             topic_entity = self.model(self.tp.topic_entity_selection(), self.tp.images).replace("\n", "")
         else:
             topic_entity = self.model(self.tp.topic_entity_selection(), []).replace("\n", "")
-        # topic_entity = self.model(self.tp.topic_entity_selection(), []).replace("\n", "")
+
         # Evaluation for topic entity
         topic_entity_info = entity_info_construction(topic_entity, self.entity_aggregation, self.mode)
         if topic_entity_info == "No Name":
-            return self.knowledge_route, self.time_record
+            return self.knowledge_route
 
         status_topic_entity = self.model(self.tp.entity_analysis("", topic_entity, topic_entity_info), [])
         # print(status_topic_entity)
 
         if status_topic_entity == "Yes":
             self.knowledge_route.append({"route": [topic_entity], "entity": self.entity_aggregation.copy(), "description": {}})
-            return self.knowledge_route, self.time_record
+            return self.knowledge_route
 
         self.search({"route": [topic_entity], "entity": self.entity_aggregation.copy(), "description": {}}, topic_entity)
 
-        return self.knowledge_route, self.time_record
+        return self.knowledge_route
 
 

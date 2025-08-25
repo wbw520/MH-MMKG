@@ -2,7 +2,7 @@ from things.model_options import model_selection
 from things.data_loading import data_reform, data_organize
 from things.templates import evaluation_temp
 import os, json
-import numpy as np
+from configs import parser
 
 
 def route_similarity_compute(route1, route2):
@@ -18,7 +18,7 @@ def route_similarity_compute(route1, route2):
         return [count/(len(route1)+len(route2)-count), count/len(route1), count/len(route2)]
 
 def main():
-    model = model_selection("gpt-4o-2024-11-20")
+    model = model_selection(model_name, api_key)
     all_data = data_reform(root)
     if os.path.exists(json_file_evaluation):
         with open(json_file_evaluation, "r", encoding="utf-8") as f:
@@ -33,7 +33,6 @@ def main():
     for i in range(len(all_data)):
         data_point = data_organize(root, all_data[i], "", use_name, use_extra)
         file = data_point["File"]
-        # print(file)
         question = data_point["Question"]
         if file in current_save:
             continue
@@ -52,8 +51,6 @@ def main():
 
 
         route_similarity = route_similarity_compute(route_to_knowledge_true, route_to_knowledge_predict)
-        # json_record[current_name][file]["route similarity"] = route_similarity
-
         temp = evaluation_temp(question, answer_true, answer_predict)
         answer = model(temp, [])
         current_save.update({file: {"answer correctness": answer, "route similarity": route_similarity}})
@@ -72,9 +69,6 @@ def count_score():
     route_count_re = 0
     route_count_pre = 0
     for item in index_:
-        # rand_int = np.random.randint(1, 17)
-        # if rand_int == 5:
-        #     continue
         if current_count[item]["answer correctness"] == "Yes":
             yes_count += 1
         route_count += current_count[item]["route similarity"][0]
@@ -83,29 +77,25 @@ def count_score():
 
     acc = yes_count / len(index_)
     print("acc:", acc)
-    # print("route count:", route_count / len(index_))
     print("route count re:", route_count_re / len(index_))
     print("route count pre:", route_count_pre / len(index_))
 
+
 if __name__ == "__main__":
-    # mode = "Direct Vision-needed"
-    # mode = "Direct"
-    # mode = "Perfect"
-    # mode = "Self Search"
-    # mode = "Offline"
-    # mode = "Online Vision-needed"
-
-    # mode = "Online Vision-needed Name False"
-
-    modes = ["Direct Vision-needed", "Direct", "Perfect", "Self Search", "Offline", "Online Vision-needed"]
-    model_name = "claude-3-5-haiku-20241022"
+    args = parser.parse_args()
+    root = args.dataset_dir
+    model_name = args.model_name
+    api_key = args.api_key
+    use_name = args.use_name
+    use_extra = args.use_extra
+    mode = args.mode
+    if args.mode == "all":
+        modes = ["Direct Vision-needed", "Direct", "Perfect", "self Search", "Offline", "Online Vision-needed"]
+    else:
+        modes = [mode]
 
     for mode in modes:
         print("mode:", mode)
-        use_name = True
-        use_extra = True
-
-        root = "D:\PycharmProjects\MM-KG"
         current_name = f"{model_name}_{mode}"
 
         json_file = os.path.join(root, "results", f"{model_name}_{mode}.json")
