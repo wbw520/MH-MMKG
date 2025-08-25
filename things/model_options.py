@@ -128,7 +128,7 @@ class Claude:
                     "type": "image",
                     "source": {
                         "type": "base64",
-                        "media_type": "image/png",  # 根据图像类型调整
+                        "media_type": "image/png",
                         "data": base64_image
                     }
                 }
