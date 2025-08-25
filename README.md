@@ -42,10 +42,10 @@ python  evaluation.py --dataset_dir your_root --mode select_a_mode --model_name 
 ## Publication
 If you want to use this work, please consider citing the following paper.
 ```
-@article{wang2025taming,
+@inproceedings{wang2025taming,
  title = {Taming the Untamed: Graph-Based Knowledge Retrieval and Reasoning for MLLMs to Conquer the Unknown},
  author = {Wang, Bowen and Jiang, Zhouqiang and Susumu, Yasuaki and Miwa, Shotaro and Chen, Tianwei and Nakashima, Yuta},
- journal={ICCV},
+ booktitle = {ICCV},
  year = {2025}
 }
 ```
