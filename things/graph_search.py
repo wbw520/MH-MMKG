@@ -97,6 +97,7 @@ class KnowledgeSearch:
     def search(self,record, current_entity):
         # if there are neighbors
         if len(self.knowledge_route) > 4:
+            # default using 5 knowledge
             print(f"already have 5 knowledge!")
             return
         if current_entity in self.relation_aggregation:
@@ -110,7 +111,7 @@ class KnowledgeSearch:
 
             memory_for_entity_selection = route_aggregation(record["route"], record["entity"], self.relation_aggregation)
             related_neighbour_entity = self.model(self.tp.entity_selection(memory_for_entity_selection, current_entity, neighbour_selection), []).replace("\n", "")
-            print("NNNNNNNNNNNNN", related_neighbour_entity)
+            # print("NNNNNNNNNNNNN", related_neighbour_entity)
 
             # save all current loop info
             recursion_calls = []
@@ -171,7 +172,7 @@ class KnowledgeSearch:
                         next_search_entity_status = "No"
                     else:
                         continue
-                    print(">>>>>>>>>>>>>>>>", next_search_entity_status)
+                    # print(">>>>>>>>>>>>>>>>", next_search_entity_status)
                     current_record = {"route": current_route_record, "entity": record["entity"].copy(), "description": record["description"].copy()}
                     if next_search_entity_status == "Yes":
 
