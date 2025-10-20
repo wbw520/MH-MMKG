@@ -45,7 +45,8 @@ If you want to use this work, please consider citing the following paper.
 @inproceedings{wang2025taming,
  title = {Taming the Untamed: Graph-Based Knowledge Retrieval and Reasoning for MLLMs to Conquer the Unknown},
  author = {Wang, Bowen and Jiang, Zhouqiang and Susumu, Yasuaki and Miwa, Shotaro and Chen, Tianwei and Nakashima, Yuta},
- booktitle = {International Conference on Computer Vision (ICCV)},
- year = {2025}
+ booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+ year = {2025},
+ pages = {4732-4742}
 }
 ```
