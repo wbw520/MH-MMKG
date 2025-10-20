@@ -1,5 +1,5 @@
 # Taming the Untamed: Graph-Based Knowledge Retrieval and Reasoning for MLLMs to Conquer the Unknown
-This repository is the official implementation of [MH-Benchmark](https://arxiv.org/abs/2506.17589). It contains the codes for constructing the MH-MMKG, running the baseline method (multi-agent self-search) as well as automatic evaluation. 
+This repository is the official implementation of [MH-Benchmark](https://openaccess.thecvf.com/content/ICCV2025/html/Wang_Taming_the_Untamed_Graph-Based_Knowledge_Retrieval_and_Reasoning_for_MLLMs_ICCV_2025_paper.html). It contains the codes for constructing the MH-MMKG, running the baseline method (multi-agent self-search) as well as automatic evaluation. 
 Our dataset aims to assess the ability of MLLMs in searching knowledge from MMKG for domain specific tasks.
 <img src="imgs/overview.png" alt="Overview of MH-MMKG" width="450"/>
 
